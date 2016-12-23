@@ -48,7 +48,9 @@ def upload_file1():
 
 @app.route('/login')
 def login():
-   return render_template('login.html')
+    if session['username'] is not None:
+        return redirect(url_for('upload_file1'))
+    return render_template('login.html')
 
 @app.route('/uploadtest')
 def uploadtest():
@@ -56,11 +58,15 @@ def uploadtest():
 
 @app.route('/addauthor')
 def add_author():
-   return render_template('addauthor.html',data={'authors': [x.json() for x in authormodel.query.all()]})
+    if session['username'] == None:
+        return redirect(url_for('login'))
+    return render_template('addauthor.html',data={'authors': [x.json() for x in authormodel.query.all()]})
 
 @app.route('/addtype')
 def add_type():
-   return render_template('addtype.html',data={'authors': [x.json() for x in booktypemodel.query.all()]})
+    if session['username'] == None:
+        return redirect(url_for('login'))
+    return render_template('addtype.html',data={'authors': [x.json() for x in booktypemodel.query.all()]})
 
 
 
