@@ -2,7 +2,6 @@ from flask import Flask,request,render_template,redirect,url_for,send_from_direc
 from flask_jwt import JWT
 from flask_restful import Api
 import os
-from twilio.rest import TwilioRestClient
 from datetime import datetime
 
 from security import authenticate,identity
@@ -98,13 +97,6 @@ def uploaded_file(filename):
 def verify():
     return render_template('verify.html')
 
-@app.route('/verified',methods=['GET','POST'])
-def verified():
-     # no = request.form["phno"]
-     # text = request.form["txt"]
-     client = TwilioRestClient("AC38b2137a6c1abb8405aa36b8f145931f", "6052cd431b8a2d5d73db79e8ca084202")
-     client.messages.create(to="+6585710444", from_="+19893212569",
-                       body="Hello from  Python SMS Testing !")
 
 
 if __name__ == '__main__':
