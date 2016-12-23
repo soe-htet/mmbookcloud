@@ -54,11 +54,8 @@ class memberLogin(Resource):
         data = memberLogin.parser.parse_args()
         member = MemberModel.get_by_email(data['email'])
         tmppwd = bytes(data['password'], 'utf-8')
-        print(base64.b64encode(tmppwd))
-        print(member.password.decode())
-        print(member.password)
         if member:
-            if member.password.decode() == base64.b16encode(tmppwd).decode():
+            if member.password.decode() == base64.b64encode(tmppwd).decode():
                 session['username'] = member.username
                 session['id'] = member.id
                 if data['mobile'] == None:
