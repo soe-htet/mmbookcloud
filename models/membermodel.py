@@ -13,7 +13,7 @@ class MemberModel(db.Model):
 
     def __init__(self, username,email,password):
         self.username = username
-        self.password = base64.b64encode(bytes(password, 'utf-8'))
+        self.password = password
         self.email = email
         self.confirmed = False
 
@@ -21,7 +21,7 @@ class MemberModel(db.Model):
         return {
                 'id': self.id,
                 'username': self.username,
-                'password': self.password,
+                'password': self.password.decode(),
                 'email': self.email,
                 'confirmed': self.confirmed,
                 }
