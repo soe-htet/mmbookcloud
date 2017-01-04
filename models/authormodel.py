@@ -5,7 +5,7 @@ class authormodel(db.Model):
     __tablename__ = 'authors'
 
     id = db.Column(db.Integer, primary_key = True)
-    author_name = db.Column(db.UnicodeText(80))
+    author_name = db.Column(db.String)
 
     def __init__(self, author_name):
         self.author_name = author_name
