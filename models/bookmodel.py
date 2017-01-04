@@ -2,7 +2,6 @@
 from db import db
 from datetime import datetime
 from models.membermodel import MemberModel
-from flask import jsonify
 
 class BookModel(db.Model):
     __tablename__ = 'books'
@@ -68,9 +67,36 @@ class BookModel(db.Model):
 
     @classmethod
     def getbooklist(cls,page):
-        books = cls.query.paginate(page=page, per_page=2)
+        books = cls.query.order_by(cls.date.desc()).paginate(page=page, per_page=2)
         return books
 
+    @classmethod
+    def getbooklistbyname(cls,page,name):
+        books = cls.query.filter_by(book_name=name).paginate(page=page, per_page=2)
+        return books
+
+    @classmethod
+    def getbooklistbyauthor(cls,page,author):
+        books = cls.query.filter_by(author=author).paginate(page=page, per_page=2)
+        return books
+
+    @classmethod
+    def getbooklistbytype(cls,page,type):
+        books = cls.query.filter_by(book_type=type).paginate(page=page, per_page=2)
+        return books
+
+    @classmethod
+    def getbooksbyfilter(cls,page,filter_name):
+        books = cls.query.filter((cls.book_type==filter_name) | (cls.author==filter_name)).order_by(cls.date.desc()).paginate(page=page, per_page=2)
+        return books
+
+
+    @classmethod
+    def booksearch(cls,page,name):
+        tmp = '%'
+        tmp2 = tmp + name + tmp
+        books = cls.query.filter(cls.book_name.ilike(tmp2)).order_by(cls.date.desc()).paginate(page=page, per_page=2)
+        return books
 
 ### paganation example
 # users = User.query.paginate(page=2, per_page=20)

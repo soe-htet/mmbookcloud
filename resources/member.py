@@ -1,6 +1,6 @@
 import werkzeug
 from flask_restful import Resource,reqparse
-from flask import session, redirect,url_for
+from flask import redirect,url_for, make_response
 from models.membermodel import MemberModel
 import base64
 
@@ -56,10 +56,11 @@ class memberLogin(Resource):
         tmppwd = bytes(data['password'], 'utf-8')
         if member:
             if member.password.decode() == base64.b64encode(tmppwd).decode():
-                session['username'] = member.username
-                session['id'] = member.id
                 if data['mobile'] == None:
-                    return redirect(url_for('upload_file1'))
+                    resp = make_response(url_for('upload_file1'))
+                    resp.set_cookie('username', member.username)
+                    resp.set_cookie('id', str(member.id))
+                    return resp
                 else:
                     return member.json(), 200
 

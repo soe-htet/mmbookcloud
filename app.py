@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template,redirect,url_for,send_from_directory,session
+from flask import Flask,request,render_template,redirect,url_for,send_from_directory,make_response
 from flask_jwt import JWT
 from flask_restful import Api
 import os
@@ -10,7 +10,7 @@ from resources.post import sellpost,postList
 from resources.member import Member,memberList,memberLogin
 from resources.author import author,authorlist
 from resources.booktype import booktype
-from resources.book import book,getbooks
+from resources.book import book,getbooks,searchbooks,filterbooks
 from models.authormodel import authormodel
 from models.booktypemodel import booktypemodel
 
@@ -38,17 +38,32 @@ api.add_resource(author,'/add-author')
 api.add_resource(booktype,'/add-type')
 api.add_resource(book,'/add-book')
 api.add_resource(getbooks,'/get-books')
+api.add_resource(searchbooks,'/search-books')
+api.add_resource(filterbooks,'/filter-books')
 
 
 @app.route('/upload')
 def upload_file1():
-    if session['username'] == None:
+    username = request.cookies.get('username')
+    if username == '':
         return redirect(url_for('login'))
     return render_template('bupload.html', data=[[x.json() for x in authormodel.query.all()],[x.json() for x in booktypemodel.query.all()]])
 
+
+@app.route('/')
+def index():
+    username = request.cookies.get('username')
+    resp = make_response(render_template("hello.html"))
+    if username is not None:
+        resp.set_cookie('username', username)
+    else:
+        resp.set_cookie('username','')
+    return resp
+
+
 @app.route('/login')
 def login():
-    if session['username'] is not None:
+    if request.cookies.get('username') != '':
         return redirect(url_for('upload_file1'))
     return render_template('login.html')
 
@@ -58,13 +73,13 @@ def uploadtest():
 
 @app.route('/addauthor')
 def add_author():
-    if session['username'] == None:
+    if request.cookies.get('username') == '':
         return redirect(url_for('login'))
     return render_template('addauthor.html',data={'authors': [x.json() for x in authormodel.query.all()]})
 
 @app.route('/addtype')
 def add_type():
-    if session['username'] == None:
+    if request.cookies.get('username') == '':
         return redirect(url_for('login'))
     return render_template('addtype.html',data={'authors': [x.json() for x in booktypemodel.query.all()]})
 
@@ -102,7 +117,6 @@ def uploaded_file(filename):
 @app.route('/verify')
 def verify():
     return render_template('verify.html')
-
 
 
 if __name__ == '__main__':

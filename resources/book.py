@@ -1,6 +1,5 @@
 import werkzeug
 from flask_restful import Resource,reqparse,url_for
-from flask import session
 from datetime import datetime
 from models.bookmodel import BookModel
 import os
@@ -50,8 +49,9 @@ class book(Resource):
             response = requests.post(url, files=files)
             print(response.content)
             pdf_url = response.content.decode("utf-8")
-
-        item = BookModel(session['id'],session['username'],data['book_name'],data['book_type'],pdf_url,img_url,data['author'],data['description'],"tags")
+        user_id = request.cookies.get('id')
+        user_name = request.cookies.get('username')
+        item = BookModel(int(user_id),user_name,data['book_name'],data['book_type'],pdf_url,img_url,data['author'],data['description'],"tags")
         try:
             item.save_to_db()
         except:
@@ -70,17 +70,75 @@ class book(Resource):
 
 class getbooks(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('id', type= int, required= True, help= "This field is must!")
+    parser.add_argument('id', type= int, help= "This field is must!")
 
     def get(self):
         data = getbooks.parser.parse_args()
-        books = BookModel.getbooklist(data["id"])
-        next_c = data["id"] + 1;
+        pg_id = 1;
+        if data["id"] is not None:
+            pg_id = data["id"]
+        books = BookModel.getbooklist(pg_id)
+        next_c = pg_id + 1;
         book_items = books.items
         book_next = "null"
         print(books.has_next)
         if books.has_next:
             book_next = request.base_url + "?id=" + str(next_c)
+
+        return jsonify(results=[i.json() for i in book_items],next=book_next)
+
+
+
+class searchbooks(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('id', type= int, help= "This field is must!")
+    parser.add_argument('search', type=str, help= "This field is must!")
+
+
+    def get(self):
+        data = searchbooks.parser.parse_args()
+        pg_id = 1;
+        search_word = ""
+        if data["id"] is not None:
+            pg_id = data["id"]
+
+        if data["search"] is not None:
+            search_word = data["search"]
+
+        books = BookModel.booksearch(page=pg_id,name=search_word)
+        next_c = pg_id + 1;
+        book_items = books.items
+        book_next = "null"
+        print(books.has_next)
+        if books.has_next:
+            book_next = request.base_url + "?id=" + str(next_c) + "&search=" + search_word
+
+        return jsonify(results=[i.json() for i in book_items],next=book_next)
+
+
+class filterbooks(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('id', type= int, help= "This field is must!")
+    parser.add_argument('filter', type=str, help= "This field is must!")
+
+
+    def get(self):
+        data = filterbooks.parser.parse_args()
+        pg_id = 1;
+        filter_word = ""
+        if data["id"] is not None:
+            pg_id = data["id"]
+
+        if data["filter"] is not None:
+            filter_word = data["filter"]
+
+        books = BookModel.getbooksbyfilter(page=pg_id,filter_name=filter_word)
+        next_c = pg_id + 1;
+        book_items = books.items
+        book_next = "null"
+        print(books.has_next)
+        if books.has_next:
+            book_next = request.base_url + "?id=" + str(next_c) + "&filter=" + filter_word
 
         return jsonify(results=[i.json() for i in book_items],next=book_next)
 
