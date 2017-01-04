@@ -53,8 +53,9 @@ class memberLogin(Resource):
     def post(self):
         data = memberLogin.parser.parse_args()
         member = MemberModel.get_by_email(data['email'])
+        tmppwd = bytes(data['password'], 'utf-8')
         if member:
-            if member.password == base64.b64encode(data['password'], 'utf-8'):
+            if base64.decodestring(member.password) == base64.decodestring(base64.b64encode(tmppwd)):
                 if data['mobile'] == None:
                     resp = make_response(url_for('upload_file1'))
                     resp.set_cookie('username', member.username)
