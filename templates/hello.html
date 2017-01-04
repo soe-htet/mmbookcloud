@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <title>MMBook</title>
 </head>
-<body>
 <H1>Hello</H1>
+{% if data != "" %}
+<H3>You are logged in as " {{data}} " <a href="/logout">Logout</a> </H3>
+{% endif %}
+
+<br>
+<a href="/upload"> Upload Book</a>
+<a href="/addauthor"> Add Author</a>
+<a href="/addtype"> Add Type</a>
+
 </body>
 </html>

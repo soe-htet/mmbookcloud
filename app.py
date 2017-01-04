@@ -45,6 +45,7 @@ api.add_resource(filterbooks,'/filter-books')
 @app.route('/upload')
 def upload_file1():
     username = request.cookies.get('username')
+    print(username)
     if username == '':
         return redirect(url_for('login'))
     return render_template('bupload.html', data=[[x.json() for x in authormodel.query.all()],[x.json() for x in booktypemodel.query.all()]])
@@ -53,11 +54,18 @@ def upload_file1():
 @app.route('/')
 def index():
     username = request.cookies.get('username')
-    resp = make_response(render_template("hello.html"))
+    resp = make_response(render_template("hello.html",data=username))
     if username is not None:
         resp.set_cookie('username', username)
     else:
         resp.set_cookie('username','')
+    return resp
+
+@app.route('/logout')
+def logout():
+    resp = make_response(url_for("login"))
+    resp.set_cookie('username','')
+
     return resp
 
 
