@@ -21,7 +21,7 @@ class MemberModel(db.Model):
         return {
                 'id': self.id,
                 'username': self.username,
-                'password': self.password.decode(),
+                'password': self.password,
                 'email': self.email,
                 'confirmed': self.confirmed,
                 }
