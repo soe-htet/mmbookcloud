@@ -67,7 +67,7 @@ class BookModel(db.Model):
 
     @classmethod
     def getbooklist(cls,page):
-        books = cls.query.order_by(cls.date.desc()).paginate(page=page, per_page=2)
+        books = cls.query.order_by(cls.date.desc()).paginate(page=page, per_page=3)
         return books
 
     @classmethod
