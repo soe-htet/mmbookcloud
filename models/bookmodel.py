@@ -8,14 +8,14 @@ class BookModel(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     owner_id = db.Column(db.Integer)
-    owner_name = db.Column(db.UnicodeText(128))
-    book_name = db.Column(db.UnicodeText(256))
+    owner_name = db.Column(db.String)
+    book_name = db.Column(db.String)
     book_type = db.Column(db.String(128))
     book_url = db.Column(db.String(80))
     book_preview = db.Column(db.String(80))
-    author = db.Column(db.UnicodeText(256))
-    description = db.Column(db.UnicodeText(1024))
-    tags = db.Column(db.UnicodeText(1024))
+    author = db.Column(db.String)
+    description = db.Column(db.String)
+    tags = db.Column(db.String)
     date = db.Column(db.DateTime)
 
     def __init__(self, owner_id, owner_name, book_name,book_type,book_url,book_preview,author,description,tags):

@@ -6,7 +6,7 @@ class MemberModel(db.Model):
     __tablename__ = 'members'
 
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.UnicodeText(80))
+    username = db.Column(db.String(80))
     email = db.Column(db.String(80))
     password = db.Column(db.String(80))
     confirmed = db.Column(db.Boolean)

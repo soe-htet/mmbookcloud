@@ -5,7 +5,7 @@ class booktypemodel(db.Model):
     __tablename__ = 'booktypes'
 
     id = db.Column(db.Integer, primary_key = True)
-    booktype= db.Column(db.UnicodeText(80))
+    booktype= db.Column(db.String)
 
     def __init__(self, book_type):
         self.booktype = book_type
